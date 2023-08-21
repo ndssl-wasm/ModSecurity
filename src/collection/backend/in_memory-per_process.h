@@ -1,6 +1,6 @@
 /*
  * ModSecurity, http://www.modsecurity.org/
- * Copyright (c) 2015 - 2021 Trustwave Holdings, Inc. (http://www.trustwave.com/)
+ * Copyright (c) 2015 - 2023 Trustwave Holdings, Inc. (http://www.trustwave.com/)
  *
  * You may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
@@ -18,6 +18,7 @@
 #include <string>
 #include <iostream>
 #include <unordered_map>
+#include <chrono>
 #include <list>
 #include <vector>
 #include <algorithm>
@@ -67,8 +68,24 @@ struct MyHash{
     }
 };
 
+class ExpirableString {
+public:
+    ExpirableString(const std::string &value) :
+        m_string(value) { }
+
+    const std::string& getString() const { return m_string;}
+    bool hasExpiry() const { return (m_expiryTime.get() != nullptr);}
+    void setExpiry(int32_t seconds_until_expiry);
+    void setString(const std::string &value) {m_string = value;}
+    bool isExpired() const;
+
+private:
+    std::string m_string;
+    std::unique_ptr<std::chrono::steady_clock::time_point> m_expiryTime;
+};
+
 class InMemoryPerProcess :
-    public std::unordered_multimap<std::string, std::string,
+    public std::unordered_multimap<std::string, ExpirableString,
         /*std::hash<std::string>*/MyHash, MyEqual>,
     public Collection {
  public:
@@ -83,6 +100,8 @@ class InMemoryPerProcess :
         const std::string &value) override;
 
     void del(const std::string& key) override;
+
+    void setExpiry(const std::string& key, int32_t expiry_seconds) override;
 
     std::unique_ptr<std::string> resolveFirst(const std::string& var) override;
 

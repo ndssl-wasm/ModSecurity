@@ -402,6 +402,9 @@ end_txn:
     return;
 }
 
+void LMDB::setExpiry(const std::string& key, int32_t expiry_seconds) {
+    // TODO: add implementation
+}
 
 void LMDB::resolveMultiMatches(const std::string& var,
     std::vector<const VariableValue *> *l,

@@ -134,6 +134,7 @@ ACTIONS = \
 	actions/disruptive/redirect.cc \
 	actions/disruptive/pass.cc \
 	actions/exec.cc \
+	actions/expire_var.cc \
 	actions/init_col.cc \
 	actions/log.cc \
 	actions/log_data.cc \
