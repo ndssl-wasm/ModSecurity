@@ -24,6 +24,7 @@
 #include <list>
 #include <utility>
 #include <memory>
+#include <unordered_map>
 
 #include "modsecurity/rules_set.h"
 #include "src/operators/operator.h"
@@ -41,3 +42,29 @@
 #include "src/actions/set_var.h"
 #include "src/actions/block.h"
 #include "src/variables/variable.h"
+
+namespace modsecurity {
+
+namespace wasm_data {
+
+std::unordered_map<std::string, std::string> data;
+
+void add_data(const std::string& data_key, const std::string& data_value) {
+    if (!data_key.empty())
+        data[data_key] = data_value;
+}
+
+std::string get_data(const std::string& data_key) {
+    auto it = data.find(data_key);
+    if (it == data.end())
+        return "";
+    return it->second;
+}
+
+void clear_data() {
+    data.clear();
+}
+
+} // wasm_data
+
+} // modsecurity

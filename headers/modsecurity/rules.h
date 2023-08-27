@@ -37,6 +37,16 @@
 #ifdef __cplusplus
 namespace modsecurity {
 
+namespace wasm_data {
+
+void add_data(const std::string& data_key, const std::string& data_value);
+
+std::string get_data(const std::string& data_key);
+
+void clear_data();
+
+} // wasm_data
+
 
 class Rules {
  public:

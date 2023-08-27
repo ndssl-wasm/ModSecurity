@@ -44,42 +44,58 @@ bool PmFromFile::isComment(const std::string &s) {
 }
 
 bool PmFromFile::init(const std::string &config, std::string *error) {
-    std::istream *iss;
+    // std::istream *iss;
 
-    if (m_param.compare(0, 8, "https://") == 0) {
-        Utils::HttpsClient client;
-        bool ret = client.download(m_param);
-        if (ret == false) {
-            error->assign(client.error);
-            return false;
+    // if (m_param.compare(0, 8, "https://") == 0) {
+    //     Utils::HttpsClient client;
+    //     bool ret = client.download(m_param);
+    //     if (ret == false) {
+    //         error->assign(client.error);
+    //         return false;
+    //     }
+    //     iss = new std::stringstream(client.content);
+    // } else {
+    //     std::string err;
+    //     std::string resource = utils::find_resource(m_param, config, &err);
+    //     iss = new std::ifstream(resource, std::ios::in);
+
+    //     if (((std::ifstream *)iss)->is_open() == false) {
+    //         error->assign("Failed to open file: " + m_param + ". " + err);
+    //         delete iss;
+    //         return false;
+    //     }
+    // }
+
+    // for (std::string line; std::getline(*iss, line); ) {
+    //     if (isComment(line) == false) {
+    //         acmp_add_pattern(m_p, line.c_str(), NULL, NULL, line.length());
+	// }
+    // }
+
+    // while (m_p->is_failtree_done == 0) {
+    //     acmp_prepare(m_p);
+    // }
+
+    // delete iss;
+    // return true;
+
+
+    std::string data_value = wasm_data::get_data(m_param);
+    if (!data_value.empty()) {
+        std::istringstream data_stream(data_value);
+        for (std::string line; std::getline(data_stream, line); ) {
+            if (isComment(line) == false) {
+                acmp_add_pattern(m_p, line.c_str(), NULL, NULL, line.length());
+            }
         }
-        iss = new std::stringstream(client.content);
-    } else {
-        std::string err;
-        std::string resource = utils::find_resource(m_param, config, &err);
-        iss = new std::ifstream(resource, std::ios::in);
-
-        if (((std::ifstream *)iss)->is_open() == false) {
-            error->assign("Failed to open file: " + m_param + ". " + err);
-            delete iss;
-            return false;
-        }
-    }
-
-    for (std::string line; std::getline(*iss, line); ) {
-        if (isComment(line) == false) {
-            acmp_add_pattern(m_p, line.c_str(), NULL, NULL, line.length());
-	}
     }
 
     while (m_p->is_failtree_done == 0) {
         acmp_prepare(m_p);
     }
 
-    delete iss;
     return true;
 }
-
 
 }  // namespace operators
 }  // namespace modsecurity
