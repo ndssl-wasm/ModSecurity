@@ -47,22 +47,14 @@ namespace modsecurity {
 
 namespace wasm_data {
 
-std::unordered_map<std::string, std::string> data;
+std::unordered_map<std::string, std::string>* data_map_ptr = nullptr;
 
-void add_data(const std::string& data_key, const std::string& data_value) {
-    if (!data_key.empty())
-        data[data_key] = data_value;
+void register_data_map(std::unordered_map<std::string, std::string>* map_ptr) {
+    data_map_ptr = map_ptr;
 }
 
-std::string get_data(const std::string& data_key) {
-    auto it = data.find(data_key);
-    if (it == data.end())
-        return "";
-    return it->second;
-}
-
-void clear_data() {
-    data.clear();
+std::unordered_map<std::string, std::string>* get_data_map() {
+    return data_map_ptr;
 }
 
 } // wasm_data

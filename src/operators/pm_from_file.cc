@@ -80,7 +80,19 @@ bool PmFromFile::init(const std::string &config, std::string *error) {
     // return true;
 
 
-    std::string data_value = wasm_data::get_data(m_param);
+    std::unordered_map<std::string, std::string>* map_ptr = wasm_data::get_data_map();
+    if (map_ptr == nullptr) {
+        error->assign("data map is not set");
+        return false;
+    }
+
+    auto it = map_ptr->find(m_param);
+    if (it == map_ptr->end()) {
+        error->assign("the data '" + m_param + "' is not found");
+        return false;
+    }
+
+    std::string data_value = it->second;
     if (!data_value.empty()) {
         std::istringstream data_stream(data_value);
         for (std::string line; std::getline(data_stream, line); ) {

@@ -24,6 +24,7 @@
 #include <vector>
 #include <list>
 #include <memory>
+#include <unordered_map>
 #endif
 
 #include "modsecurity/rule.h"
@@ -39,11 +40,9 @@ namespace modsecurity {
 
 namespace wasm_data {
 
-void add_data(const std::string& data_key, const std::string& data_value);
+void register_data_map(std::unordered_map<std::string, std::string>* map_ptr);
 
-std::string get_data(const std::string& data_key);
-
-void clear_data();
+std::unordered_map<std::string, std::string>* get_data_map();
 
 } // wasm_data
 
